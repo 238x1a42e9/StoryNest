@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}{{ heading }} | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<header class="wrap page-head">
+  <h1>{{ heading }}</h1>
+  <p>{{ page.paginator.count }} post{{ page.paginator.count|pluralize }}</p>
+</header>
+
+<div class="wrap with-rail">
+  <section aria-label="Posts">
+    {% if page.object_list %}
+      <ul class="post-list">
+        {% for post in page %}{% include "blog/_post_row.html" with show_cover=True %}{% endfor %}
+      </ul>
+      {% include "blog/_pagination.html" %}
+    {% else %}
+      <div class="empty">
+        <h2>No posts here yet</h2>
+        <p>Try another category or tag, or head back to the <a href="{% url 'blog:home' %}">latest posts</a>.</p>
+      </div>
+    {% endif %}
+  </section>
+  {% include "blog/_rail.html" %}
+</div>
+{% endblock %}

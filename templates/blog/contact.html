@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Contact | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap form-page">
+  <h1>Contact</h1>
+  <p class="form-lede">Questions, collaborations or just a hello. Send a note and {{ AUTHOR_NAME }} will reply by email.</p>
+
+  <div class="contact-grid">
+    <form method="post" class="form-narrow" novalidate style="max-width:none">
+      {% csrf_token %}
+      {% if form.errors %}<div class="form-error-summary" role="alert">Fix the highlighted fields and send again.</div>{% endif %}
+      {% for field in form %}{% include "blog/_field.html" %}{% endfor %}
+      <button class="btn" type="submit">Send message</button>
+    </form>
+
+    <aside class="contact-card" aria-label="Contact details">
+      <h2>Find us</h2>
+      <p><a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a></p>
+      <p><a href="tel:{{ CONTACT_PHONE }}">{{ CONTACT_PHONE }}</a></p>
+      <p>{{ CONTACT_ADDRESS }}</p>
+    </aside>
+  </div>
+</div>
+{% endblock %}

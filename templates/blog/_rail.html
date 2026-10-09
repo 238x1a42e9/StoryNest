@@ -1,0 +1,29 @@
+<aside class="rail" aria-label="Browse">
+  <section>
+    <h2>Categories</h2>
+    {% if categories %}
+      <ul class="rail-list">
+        {% for c in categories %}
+          <li>
+            <a href="{{ c.get_absolute_url }}" {% if active_category and active_category.pk == c.pk %}aria-current="page"{% endif %}>{{ c.name }}</a>
+            <span class="count">{{ c.n }}</span>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="help">Categories appear here once posts are published.</p>
+    {% endif %}
+  </section>
+  <section>
+    <h2>Tags</h2>
+    {% if tags %}
+      <ul class="chips">
+        {% for t in tags %}
+          <li><a class="chip" href="{{ t.get_absolute_url }}" {% if active_tag and active_tag.pk == t.pk %}aria-current="page"{% endif %}>{{ t.name }}</a></li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="help">Tags appear here once posts are published.</p>
+    {% endif %}
+  </section>
+</aside>

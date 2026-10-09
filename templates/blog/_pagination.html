@@ -1,0 +1,8 @@
+{% load blog_extras %}
+{% if page.paginator.num_pages > 1 %}
+  <nav class="pagination" aria-label="Pages">
+    {% if page.has_previous %}<a href="{% page_url page.previous_page_number %}" rel="prev">Newer posts</a>{% endif %}
+    <span class="current">Page {{ page.number }} of {{ page.paginator.num_pages }}</span>
+    {% if page.has_next %}<a href="{% page_url page.next_page_number %}" rel="next">Older posts</a>{% endif %}
+  </nav>
+{% endif %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}{% if mode == "edit" %}Edit post{% else %}Write a post{% endif %} | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap form-page">
+  <h1>{% if mode == "edit" %}Edit post{% else %}Write a post{% endif %}</h1>
+
+  <form method="post" enctype="multipart/form-data" class="form-wide" data-preview-url="{% url 'blog:preview' %}" novalidate>
+    {% csrf_token %}
+    {% if form.errors %}
+      <div class="form-error-summary" role="alert">Fix the highlighted fields and save again.</div>
+    {% endif %}
+    {{ form.non_field_errors }}
+
+    {% include "blog/_field.html" with field=form.title %}
+
+    <div class="field{% if form.content.errors %} field--error{% endif %}">
+      <label for="id_content">Post</label>
+      <div class="editor" data-editor>
+        <div class="editor__bar" role="toolbar" aria-label="Formatting">
+          <button type="button" data-md="bold" title="Bold"><strong>B</strong></button>
+          <button type="button" data-md="italic" title="Italic"><em>I</em></button>
+          <button type="button" data-md="heading" title="Heading">H2</button>
+          <button type="button" data-md="quote" title="Quote">Quote</button>
+          <button type="button" data-md="list" title="Bulleted list">List</button>
+          <button type="button" data-md="code" title="Code">Code</button>
+          <button type="button" data-md="link" title="Link">Link</button>
+          <span class="spacer"></span>
+          <button type="button" data-preview-toggle aria-pressed="false">Preview</button>
+        </div>
+        {{ form.content }}
+        <div class="editor__preview prose" data-preview hidden aria-live="polite"></div>
+      </div>
+      <p class="help">Markdown is supported. Use the buttons above or type it yourself: **bold**, *italic*, ## heading, - list.</p>
+      {{ form.content.errors }}
+    </div>
+
+    {% include "blog/_field.html" with field=form.excerpt %}
+    {% include "blog/_field.html" with field=form.category %}
+    {% include "blog/_field.html" with field=form.new_category %}
+    {% include "blog/_field.html" with field=form.tag_list %}
+
+    <div class="field{% if form.cover.errors %} field--error{% endif %}">
+      <label for="{{ form.cover.id_for_label }}">Cover image <span class="help" style="display:inline">(optional)</span></label>
+      {% if post and post.cover %}
+        <img class="current-cover" src="{{ post.cover.url }}" alt="Current cover image">
+      {% endif %}
+      {{ form.cover }}
+      <p class="help">JPG, PNG or WebP, up to 4 MB.{% if post and post.cover %} Choose a new file to replace the current one.{% endif %}</p>
+      {{ form.cover.errors }}
+    </div>
+
+    {% include "blog/_field.html" with field=form.status %}
+
+    <div class="btn-row">
+      <button class="btn" type="submit">{% if mode == "edit" %}Save changes{% else %}Save post{% endif %}</button>
+      <a class="btn btn--quiet" href="{% if post %}{{ post.get_absolute_url }}{% else %}{% url 'blog:home' %}{% endif %}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

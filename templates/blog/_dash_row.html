@@ -1,0 +1,15 @@
+<div class="dash-row">
+  <div>
+    <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+    <div class="meta">
+      <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:"M j, Y" }}</time>
+      {% if post.category %}<span>{{ post.category.name }}</span>{% endif %}
+      <span>{{ post.n_comments }} comment{{ post.n_comments|pluralize }}</span>
+      <span>{{ post.n_likes }} like{{ post.n_likes|pluralize }}</span>
+    </div>
+  </div>
+  <div class="btn-row">
+    <a class="btn btn--quiet btn--small" href="{% url 'blog:edit' post.slug %}">Edit</a>
+    <a class="btn btn--quiet btn--small" href="{% url 'blog:delete' post.slug %}">Delete</a>
+  </div>
+</div>

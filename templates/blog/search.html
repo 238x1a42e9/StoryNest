@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{% if q %}Search: {{ q }}{% else %}Search{% endif %} | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<header class="wrap page-head">
+  <h1>{% if q %}Results for &ldquo;{{ q }}&rdquo;{% else %}Search{% endif %}</h1>
+  {% if q %}<p>{{ page.paginator.count }} post{{ page.paginator.count|pluralize }} found</p>{% endif %}
+</header>
+
+<div class="wrap with-rail">
+  <section aria-label="Search results">
+    {% if not q %}
+      <div class="empty">
+        <h2>What are you looking for?</h2>
+        <p>Type a word or phrase in the search box above. Titles, post text, tags and categories are all searched.</p>
+      </div>
+    {% elif page.object_list %}
+      <ul class="post-list">
+        {% for post in page %}{% include "blog/_post_row.html" %}{% endfor %}
+      </ul>
+      {% include "blog/_pagination.html" %}
+    {% else %}
+      <div class="empty">
+        <h2>No posts match &ldquo;{{ q }}&rdquo;</h2>
+        <p>Check the spelling, try a shorter word, or browse a category on the right.</p>
+      </div>
+    {% endif %}
+  </section>
+  {% include "blog/_rail.html" %}
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Page not found | {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="wrap error-page">
+  <h1>This page does not exist</h1>
+  <p>The link may be old, or the post may have been unpublished. Try searching instead.</p>
+  <a class="btn" href="{% url 'blog:home' %}">Back to the latest posts</a>
+</div>
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% load blog_extras %}
+{% block title %}{{ post.title }} | {{ SITE_NAME }}{% endblock %}
+{% block description %}{{ post.summary }}{% endblock %}
+
+{% block content %}
+<article class="wrap article">
+  <header class="article__head">
+    <h1 class="article__title">{{ post.title }}</h1>
+    <p class="article__summary">{{ post.summary }}</p>
+    <div class="meta">
+      <span>By <strong><a href="{% url 'blog:author' post.author.username %}">{{ post.author.username }}</a></strong></span>
+      <time datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:"F j, Y" }}</time>
+      {% if post.category %}<a href="{{ post.category.get_absolute_url }}">{{ post.category.name }}</a>{% endif %}
+      <span>{{ post.reading_minutes }} min read</span>
+      {% if not post.is_published %}<span class="badge badge--draft">Draft: only you can see this</span>{% endif %}
+    </div>
+  </header>
+
+  {% if post.cover %}
+    <figure class="article__cover" style="margin-inline:0">
+      <img src="{{ post.cover.url }}" alt="Cover image for {{ post.title }}">
+    </figure>
+  {% endif %}
+
+  <div class="prose">{{ post.html }}</div>
+
+  {% if post.tags.all %}
+    <ul class="chips" style="margin-top:2rem" aria-label="Tags">
+      {% for t in post.tags.all %}<li><a class="chip" href="{{ t.get_absolute_url }}">{{ t.name }}</a></li>{% endfor %}
+    </ul>
+  {% endif %}
+
+  <div class="article__actions">
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'blog:like' post.slug %}" data-like-form>
+        {% csrf_token %}
+        <button type="submit" class="like-btn" aria-pressed="{{ liked|yesno:'true,false' }}">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.3C1.1 8.3 3.2 5 6.5 5c2 0 3.6 1.1 5.5 3.2C13.9 6.1 15.5 5 17.5 5c3.3 0 5.4 3.3 4 6.7C19.5 16.4 12 21 12 21z" stroke-linejoin="round"/></svg>
+          <span data-like-label>{% if liked %}Liked{% else %}Like{% endif %}</span>
+          <span data-like-count>{{ like_count }}</span>
+        </button>
+      </form>
+    {% else %}
+      <a class="like-btn" href="{% url 'login' %}?next={{ request.path|urlencode }}" style="text-decoration:none">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-7.5-4.6-9.5-9.3C1.1 8.3 3.2 5 6.5 5c2 0 3.6 1.1 5.5 3.2C13.9 6.1 15.5 5 17.5 5c3.3 0 5.4 3.3 4 6.7C19.5 16.4 12 21 12 21z" stroke-linejoin="round"/></svg>
+        Log in to like <span>{{ like_count }}</span>
+      </a>
+    {% endif %}
+
+    {% if can_edit %}
+      <div class="owner-tools">
+        <a class="btn btn--quiet btn--small" href="{% url 'blog:edit' post.slug %}">Edit post</a>
+        <a class="btn btn--quiet btn--small" href="{% url 'blog:delete' post.slug %}">Delete post</a>
+      </div>
+    {% endif %}
+  </div>
+
+  <section class="comments" id="comments" aria-labelledby="comments-heading">
+    <h2 id="comments-heading">Comments ({{ comments|length }})</h2>
+
+    {% if comments %}
+      <ul class="note-list">
+        {% for c in comments %}
+          <li class="note" id="note-{{ c.pk }}">
+            <div class="note__head">
+              <strong>{{ c.user.username }}</strong>
+              <time datetime="{{ c.created_at|date:'c' }}">{{ c.created_at|date:"M j, Y" }} at {{ c.created_at|date:"H:i" }}</time>
+              {% if c.user_id == user.pk or post.author_id == user.pk or user.is_superuser %}
+                <form method="post" action="{% url 'blog:comment_delete' c.pk %}" data-confirm="Delete this comment?">
+                  {% csrf_token %}
+                  <button type="submit" class="linklike">Delete comment</button>
+                </form>
+              {% endif %}
+            </div>
+            <p class="note__body">{{ c.text }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="help" style="margin-bottom:1.5rem">No comments yet. Be the first to add one.</p>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+      <form method="post" action="{% url 'blog:comment_add' post.slug %}">
+        {% csrf_token %}
+        {% include "blog/_field.html" with field=comment_form.text %}
+        <button class="btn" type="submit">Post comment</button>
+      </form>
+    {% else %}
+      <div class="signin-prompt">
+        <p><strong>Want to join the conversation?</strong> Log in or create a free account to leave a comment.</p>
+        <div class="btn-row">
+          <a class="btn" href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in</a>
+          <a class="btn btn--quiet" href="{% url 'register' %}?next={{ request.path|urlencode }}">Sign up</a>
+        </div>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if related %}
+    <section class="related" aria-labelledby="related-heading">
+      <h2 id="related-heading">Keep reading</h2>
+      <ul class="post-list">
+        {% for post in related %}{% include "blog/_post_row.html" %}{% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+</article>
+{% endblock %}

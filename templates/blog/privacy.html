@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block title %}Privacy Policy | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap form-page">
+  <div class="static-page">
+    <h1>Privacy Policy</h1>
+    <p class="form-lede">What {{ SITE_NAME }} stores about you, in plain words. Replace this text with your own policy before publishing.</p>
+    <h2>Accounts</h2>
+    <p>If you register, we store your username, email address and a hashed password. We use a session cookie to keep you logged in.</p>
+    <h2>Comments and likes</h2>
+    <p>Comments and likes are saved with your username so they can be shown on the post and removed by you or the post&rsquo;s author.</p>
+    <h2>Newsletter and contact form</h2>
+    <p>If you subscribe or send a message, we store your email address and what you wrote so we can reply. We do not sell or share it.</p>
+    <h2>Questions</h2>
+    <p>Use the <a href="{% url 'blog:contact' %}">contact form</a> to ask us to delete your data.</p>
+  </div>
+</div>
+{% endblock %}

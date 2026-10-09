@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Delete post | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap form-page">
+  <h1>Delete this post?</h1>
+  <div class="form-narrow">
+    <p><strong>{{ post.title }}</strong> and its {{ post.comments.count }} comment{{ post.comments.count|pluralize }} will be removed for good. This cannot be undone.</p>
+    <form method="post" class="btn-row">
+      {% csrf_token %}
+      <button class="btn btn--danger" type="submit">Delete post</button>
+      <a class="btn btn--quiet" href="{{ post.get_absolute_url }}">Keep post</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

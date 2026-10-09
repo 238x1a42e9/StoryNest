@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}Accessibility Statement | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap form-page">
+  <div class="static-page">
+    <h1>Accessibility Statement</h1>
+    <p class="form-lede">{{ SITE_NAME }} is built to be readable and usable by everyone.</p>
+    <h2>What we do</h2>
+    <p>Pages use headings and landmarks, links and buttons can be reached with the keyboard, focus is always visible, images have text descriptions, and animation is switched off for people who ask their device to reduce motion.</p>
+    <h2>Known gaps</h2>
+    <p>The post editor preview and some demo images may need improvement. If something does not work for you, tell us.</p>
+    <h2>Tell us</h2>
+    <p>Reach out through the <a href="{% url 'blog:contact' %}">contact form</a> and we will fix it.</p>
+  </div>
+</div>
+{% endblock %}

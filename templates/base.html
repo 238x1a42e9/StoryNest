@@ -1,0 +1,108 @@
+{% load static %}<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ SITE_NAME }}{% endblock %}</title>
+  <meta name="description" content="{% block description %}{{ SITE_TAGLINE }}{% endblock %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400..700&family=Newsreader:ital,opsz,wght@0,6..72,300..600;1,6..72,300..600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/storynest.css' %}">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='16' fill='%234a242d'/%3E%3Ctext x='16' y='23' font-size='20' text-anchor='middle' fill='%23e6fadc' font-family='Georgia,serif'%3ES%3C/text%3E%3C/svg%3E">
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  {% with page_name=request.resolver_match.url_name %}
+  <div class="utility">
+    <div class="wrap utility__inner">
+      <form class="search-form" action="{% url 'blog:search' %}" method="get" role="search">
+        <label class="visually-hidden" for="site-search">Search posts</label>
+        <input id="site-search" type="search" name="q" value="{{ q|default:'' }}" placeholder="Search posts" autocomplete="off">
+        <button type="submit">Search</button>
+      </form>
+      <div class="utility__links">
+        {% if user.is_authenticated %}
+          {% if can_write %}
+            <a href="{% url 'blog:create' %}">Write a post</a>
+            <a href="{% url 'blog:my_posts' %}">My posts</a>
+          {% endif %}
+          <span>Signed in as {{ user.get_username }}</span>
+          <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="linklike">Log out</button>
+          </form>
+        {% else %}
+          <a href="{% url 'login' %}?next={{ request.path|urlencode }}">Log in</a>
+          <a class="signup-link" href="{% url 'register' %}">Sign up</a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <header class="site-header">
+    <div class="wrap site-header__inner">
+      <a class="wordmark" href="{% url 'blog:home' %}">{{ SITE_NAME }}</a>
+      <nav class="site-nav" aria-label="Main">
+        <a class="pill" href="{% url 'blog:home' %}" {% if page_name == 'home' %}aria-current="page"{% endif %}>Home</a>
+        <a class="pill" href="{% url 'blog:blog' %}" {% if page_name == 'blog' or page_name == 'detail' or page_name == 'category' or page_name == 'tag' %}aria-current="page"{% endif %}>Blog</a>
+        <a class="pill" href="{% url 'blog:contact' %}" {% if page_name == 'contact' %}aria-current="page"{% endif %}>Contact</a>
+        <a class="pill pill--outline pill--dot" href="{% url 'blog:subscribe_page' %}" {% if page_name == 'subscribe_page' %}aria-current="page"{% endif %}>Subscribe</a>
+      </nav>
+    </div>
+  </header>
+  {% endwith %}
+
+  {% if messages %}
+    <div class="wrap">
+      <ul class="messages" role="status">
+        {% for message in messages %}<li class="{{ message.tags }}">{{ message }}</li>{% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+
+  <main id="content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap">
+      <div class="footer-top">
+        <a class="footer-brand" href="{% url 'blog:home' %}">{{ SITE_NAME }}</a>
+        <ul class="footer-links">
+          <li><a href="{% url 'blog:home' %}">Home</a></li>
+          <li><a href="{% url 'blog:blog' %}">Blog</a></li>
+          <li><a href="{% url 'blog:contact' %}">Contact</a></li>
+        </ul>
+        <div>
+          <ul class="footer-contact">
+            <li><a href="tel:{{ CONTACT_PHONE }}">{{ CONTACT_PHONE }}</a></li>
+            <li><a href="mailto:{{ CONTACT_EMAIL }}">{{ CONTACT_EMAIL }}</a></li>
+            <li>{{ CONTACT_ADDRESS }}</li>
+          </ul>
+          <ul class="socials" aria-label="Social media">
+            {% for name, url in SOCIAL_LINKS %}
+              <li style="list-style:none"><a href="{{ url }}" rel="noopener" aria-label="{{ name }}" title="{{ name }}">{{ name|slice:":2" }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+        <a class="pill pill--outline pill--dot" href="{% url 'blog:subscribe_page' %}">Subscribe</a>
+      </div>
+
+      <div class="footer-bottom">
+        <p class="footer-statement">{{ FOOTER_STATEMENT }}</p>
+        <div class="footer-legal">
+          <a href="{% url 'blog:privacy' %}">Privacy Policy</a>
+          <a href="{% url 'blog:accessibility' %}">Accessibility Statement</a>
+        </div>
+        <p class="footer-legal">&copy; {{ current_year }} by {{ SITE_NAME }}.<br>Built with Django.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="{% static 'js/storynest.js' %}" defer></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

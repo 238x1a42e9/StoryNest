@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Subscribe | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap form-page">
+  <h1>Stay in the loop</h1>
+  <p class="form-lede">{{ NEWSLETTER_TEXT }}</p>
+  <form method="post" action="{% url 'blog:subscribe' %}" class="form-narrow" novalidate>
+    {% csrf_token %}
+    <input type="hidden" name="next_page" value="{% url 'blog:subscribe_page' %}">
+    {% include "blog/_field.html" with field=form.email %}
+    <button class="btn" type="submit">Subscribe</button>
+    <p class="form-foot">No spam, and you can ask to be removed at any time through the <a href="{% url 'blog:contact' %}">contact form</a>.</p>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Not allowed | {{ SITE_NAME }}{% endblock %}
+{% block content %}
+<div class="wrap error-page">
+  <h1>You can not do that</h1>
+  <p>This page is only open to the post&rsquo;s author{% if user.is_authenticated %}, or to accounts with author rights{% endif %}.</p>
+  <a class="btn" href="{% url 'blog:home' %}">Back to the latest posts</a>
+</div>
+{% endblock %}

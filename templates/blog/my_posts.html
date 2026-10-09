@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}My posts | {{ SITE_NAME }}{% endblock %}
+
+{% block content %}
+<div class="wrap form-page">
+  <div class="btn-row" style="justify-content: space-between; margin-bottom: 1.5rem">
+    <h1 style="margin:0">My posts</h1>
+    {% if can_write %}<a class="btn" href="{% url 'blog:create' %}">Write a post</a>{% endif %}
+  </div>
+
+  {% if not drafts and not published %}
+    <div class="empty">
+      <h2>You have not written anything yet</h2>
+      <p>Your drafts and published posts will be listed here.</p>
+    </div>
+  {% endif %}
+
+  {% if drafts %}
+    <section class="dash-section" aria-labelledby="drafts-h">
+      <h2 class="index-heading" id="drafts-h">Drafts ({{ drafts|length }})</h2>
+      {% for post in drafts %}{% include "blog/_dash_row.html" %}{% endfor %}
+    </section>
+  {% endif %}
+
+  {% if published %}
+    <section class="dash-section" aria-labelledby="pub-h">
+      <h2 class="index-heading" id="pub-h">Published ({{ published|length }})</h2>
+      {% for post in published %}{% include "blog/_dash_row.html" %}{% endfor %}
+    </section>
+  {% endif %}
+</div>
+{% endblock %}

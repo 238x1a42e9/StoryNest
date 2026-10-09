@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% load static %}
+{% block title %}{{ SITE_NAME }}: {{ SITE_TAGLINE }}{% endblock %}
+
+{% block content %}
+<section class="hero" aria-labelledby="home-title">
+  <div class="wrap">
+    <h1 class="visually-hidden" id="home-title">{{ SITE_NAME }}: {{ SITE_TAGLINE }}</h1>
+    <div class="collage">
+      <img class="collage__left" src="{% static 'img/hero-art.jpg' %}" alt="A framed abstract print propped beside dried flowers">
+      <img class="collage__center" src="{% static 'img/hero-living.jpg' %}" alt="A red abstract print above a cream panelled wall and a leather chair">
+      <img class="collage__right" src="{% static 'img/hero-oils.jpg' %}" alt="Olive oil and vinegar bottles with a candle on a kitchen counter">
+    </div>
+    <p class="hero__line">{{ SITE_TAGLINE }}</p>
+  </div>
+</section>
+
+<section class="section" aria-labelledby="latest-heading">
+  <div class="wrap">
+    <div class="section__head">
+      <h2 class="section__title" id="latest-heading">Latest posts</h2>
+      <a class="pill pill--dark pill--dot" href="{% url 'blog:blog' %}">View All Posts</a>
+    </div>
+
+    {% if latest %}
+      <ul class="tiles">
+        {% for post in latest %}
+          <li class="tile">
+            <a class="tile__img" href="{{ post.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+              {% if post.cover %}<img src="{{ post.cover.url }}" alt="" loading="lazy">{% endif %}
+            </a>
+            <time class="tile__date" datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:"M j" }}</time>
+            <h3 class="tile__title"><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty">
+        <h3>Nothing published yet</h3>
+        {% if can_write %}
+          <p>Write the first post and it will show up here.</p>
+          <a class="btn" href="{% url 'blog:create' %}">Write a post</a>
+        {% else %}
+          <p>Posts will appear here as soon as the author publishes them.</p>
+        {% endif %}
+      </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="section about" aria-labelledby="about-heading">
+  <div class="wrap about__grid">
+    <div class="about__photo">
+      <img src="{% static 'img/about-photo.jpg' %}" alt="A mountain road seen from a car window, with the wing mirror in the corner" loading="lazy">
+    </div>
+    <div>
+      <p class="about__label">About me</p>
+      <div class="about__card">
+        <img src="{% static 'img/rosie.jpg' %}" alt="Placeholder portrait for {{ AUTHOR_NAME }}" loading="lazy">
+        <h2 id="about-heading">Hi, I&rsquo;m {{ AUTHOR_NAME }}</h2>
+        <p>{{ ABOUT_TEXT }}</p>
+        <a class="pill" href="{% url 'blog:contact' %}">Say hello</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="subscribe" aria-labelledby="loop-heading">
+  <div class="wrap">
+    <div class="newsletter__grid">
+      <div class="newsletter__body">
+        <h2 id="loop-heading">Stay in the loop</h2>
+        <p>{{ NEWSLETTER_TEXT }}</p>
+        <form class="subscribe-form" method="post" action="{% url 'blog:subscribe' %}">
+          {% csrf_token %}
+          <input type="hidden" name="next_page" value="{% url 'blog:home' %}#subscribe">
+          <label class="visually-hidden" for="home-email">Email address</label>
+          <input id="home-email" type="email" name="email" required placeholder="you@example.com" autocomplete="email">
+          <button class="btn" type="submit">Subscribe</button>
+        </form>
+      </div>
+      <div class="newsletter__img">
+        <img src="{% static 'img/newsletter.jpg' %}" alt="A red abstract print on a cream wall above a sofa with a fluffy throw" loading="lazy">
+      </div>
+    </div>
+  </div>
+</section>
+
+{% if archive %}
+<section class="section" aria-labelledby="archive-heading" style="padding-top:0">
+  <div class="wrap">
+    <div class="section__head">
+      <h2 class="section__title" id="archive-heading">From the archive</h2>
+      <a class="pill pill--dark pill--dot" href="{% url 'blog:blog' %}">View All Posts</a>
+    </div>
+    <ul class="archive-list">
+      {% for post in archive %}
+        <li class="archive-row">
+          <a class="archive-row__img" href="{{ post.get_absolute_url }}" tabindex="-1" aria-hidden="true">
+            {% if post.cover %}<img src="{{ post.cover.url }}" alt="" loading="lazy">{% endif %}
+          </a>
+          <div>
+            <time class="archive-row__date" datetime="{{ post.created_at|date:'Y-m-d' }}">{{ post.created_at|date:"M j" }}</time>
+            <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+            <p class="archive-row__summary">{{ post.summary }}</p>
+          </div>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+{% endif %}
+{% endblock %}
