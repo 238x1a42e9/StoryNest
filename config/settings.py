@@ -17,7 +17,11 @@ SECRET_KEY = os.environ.get(
 DEBUG = os.environ.get("DJANGO_DEBUG", "1") == "1"
 ALLOWED_HOSTS = [h for h in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if h]
 if DEBUG and not ALLOWED_HOSTS:
-    ALLOWED_HOSTS = ["localhost", "127.0.0.1", "[::1]", "testserver"]
+    ALLOWED_HOSTS = [
+    "storynest-bqxg.onrender.com",
+    "localhost",
+    "127.0.0.1",
+]
 
 # ---------------------------------------------------------------- Site settings
 SITE_NAME = "StoryNest"
